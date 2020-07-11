@@ -19,7 +19,7 @@ namespace MvcMovie.Controllers
             _context = context;
         }
 
-        // GET: Movies
+        /* GET: Movies by title only
         public async Task<IActionResult> Index(string searchString)
         {
             var movies = from m in _context.Movie//this creates a linq query to select the movies
@@ -32,12 +32,48 @@ namespace MvcMovie.Controllers
             //return View(await _context.Movie.ToListAsync());
             return View(await movies.ToListAsync());
         }
+        */
 
-        
+        //GET: Movies
+        public async Task<IActionResult> Index(string movieGenre, string searchString)
+        {
+            //The SelctList of genres is created by projecting the distinct genres
+            
+            //we dont want our select list to have duplicate genres
+            //Use LINQ to get list of genres.
+            IQueryable<string> genreQuery = from m in _context.Movie
+                                            orderby m.Genre
+                                            select m.Genre;
 
-        //this Details Method has the id parameter which is generally passed as route data
-        // GET: Movies/Details/5
-        public async Task<IActionResult> Details(int? id)
+
+            var movies = from m in _context.Movie//this creates a linq query to select the movies
+                         select m;
+
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                movies = movies.Where(s => s.Title.Contains(searchString));
+            }
+
+
+            if (!string.IsNullOrEmpty(movieGenre))
+            {
+                movies = movies.Where(x => x.Genre == movieGenre);
+            }
+
+            var movieGenreVM = new MovieGenreViewModel
+            {
+                Genres = new SelectList(await genreQuery.Distinct().ToListAsync()),
+                Movies = await movies.ToListAsync()
+            };
+
+            return View(movieGenreVM);
+        }
+        // the following code is a LINQ query that retrieves all the genres from the database.
+
+
+            //this Details Method has the id parameter which is generally passed as route data
+            // GET: Movies/Details/5
+            public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
             {
