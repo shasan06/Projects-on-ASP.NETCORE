@@ -16,18 +16,18 @@ namespace MvcMovie.Models
         [DataType(DataType.Date)]
         public DateTime ReleaseDate { get; set; }
 
-        [RegularExpression(@"^[A-Z]+[a-zA-Z]*$")]
+        [RegularExpression(@"^[A-Z]+[a-zA-Z]*$")]//here it is in two line
         [Required]
         [StringLength(30)]
         public string Genre { get; set; }
 
-        [Range(1,100)]
-        [DataType(DataType.Currency)]
+        [Range(1,100), DataType(DataType.Currency)]//combining in one line
+
         [Column(TypeName = "decimal(18, 2)")]
         public decimal Price { get; set; }
 
-        [RegularExpression(@"^[A-Z]+[a-zA-Z0-9""'\s-]*$")]
-        [StringLength(5)]
+        [RegularExpression(@"^[A-Z]+[a-zA-Z0-9""'\s-]*$"), StringLength(5)]//**same one line 
+
         [Required]
         public string Rating { get; set; }
     }
